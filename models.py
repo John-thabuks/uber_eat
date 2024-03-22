@@ -32,6 +32,7 @@ class Rider(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     reviews = db.relationship('Review', backref='rider')
+    orders = db.relationship("Order", backref='rider')
 
 
 
@@ -40,7 +41,7 @@ class Owner(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key = True)
     location = db.Column(db.String)
-    name = db.Column(db.String)
+    # name = db.Column(db.String)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
@@ -54,7 +55,7 @@ class Customer(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     payments= db.relationship('Payment', backref='customer')
-    order = db.relationship('Meal', backref='customer')
+    order = db.relationship('Order', backref='customer')
     reviews = db.relationship('Review', backref='customer')
 
 
@@ -62,7 +63,7 @@ class Meal(db.Model, SerializerMixin):
     __tablename__ = "meals"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True)
+    name = db.Column(db.String)
     price = db.Column(db.Integer)
     description = db.Column(db.String)
     image = db.Column(db.String)
@@ -78,7 +79,7 @@ class Restaurant(db.Model, SerializerMixin):
     name = db.Column(db.String, unique=True)
     location = db.Column(db.String)
     
-    customers = db.relationship('Customer', backref='resto')
+    # customers = db.relationship('Customer', backref='resto')
     meals = db.relationship('Meal', backref ='resto')
 
     reviews = db.relationship('Review', backref='resto')
@@ -91,6 +92,7 @@ class Review(db.Model, SerializerMixin):
     rating = db.Column(db.Integer)
     rider_id = db.Column(db.Integer, db.ForeignKey('riders.id'))
     resto_id = db.Column(db.Integer, db.ForeignKey('restaurants.id'))
+    customer_id = db.Column(db.Integer, db.ForeignKey("customers.id"))
 
     # rider_review = db.relationship('Rider', backref='rider')
     # resto_review = db.relationship('Restaurant', backref= 'restoz')
