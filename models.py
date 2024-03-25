@@ -1,5 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
+# models.py
 from sqlalchemy_serializer import SerializerMixin
+# from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy import MetaData
 
 metadata = MetaData()
@@ -14,9 +16,11 @@ meal_order = db.Table(
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
-
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True)
+
+    serialize_only = ('name')
 
     rider = db.relationship('Rider', backref='userz')
     userCustomer = db.relationship('Customer',backref='user')
@@ -31,6 +35,8 @@ class Rider(db.Model, SerializerMixin):
     plate_number = db.Column(db.String, unique=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+    serialize_only = ('bike_type', 'plate_number', 'user_id')
+
     reviews = db.relationship('Review', backref='rider')
     orders = db.relationship("Order", backref='rider')
 
@@ -44,6 +50,7 @@ class Owner(db.Model, SerializerMixin):
     # name = db.Column(db.String)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+    
 
 
 class Customer(db.Model, SerializerMixin):
@@ -53,6 +60,9 @@ class Customer(db.Model, SerializerMixin):
     address = db.Column(db.String)
     wallet = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    resto_id = db.Column(db.Integer, db.ForeignKey('restaurants.id'))
+
+    serialize_only = ('address', 'wallet', 'user.name')
 
     payments= db.relationship('Payment', backref='customer')
     order = db.relationship('Order', backref='customer')
@@ -69,7 +79,12 @@ class Meal(db.Model, SerializerMixin):
     image = db.Column(db.String)
     resto_id = db.Column('Restaurant', db.ForeignKey('restaurants.id'))
 
+    # serialize_only= ('name', 'price', 'description', 'image', 'resto.name')
+    
+
     order = db.relationship('Order', secondary=meal_order, back_populates='meals')
+
+    serialize_rules = ('-order', 'name', 'price', 'description', 'image',)
 
 
 class Restaurant(db.Model, SerializerMixin):
@@ -78,8 +93,10 @@ class Restaurant(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True)
     location = db.Column(db.String)
+
+    serialize_only = ('name', 'location', )
     
-    # customers = db.relationship('Customer', backref='resto')
+    customers = db.relationship('Customer', backref='resto')
     meals = db.relationship('Meal', backref ='resto')
 
     reviews = db.relationship('Review', backref='resto')
@@ -94,6 +111,7 @@ class Review(db.Model, SerializerMixin):
     resto_id = db.Column(db.Integer, db.ForeignKey('restaurants.id'))
     customer_id = db.Column(db.Integer, db.ForeignKey("customers.id"))
 
+    serialize_only = ('comments', 'rating', 'rider_id', 'resto_id', 'customer_id')
     # rider_review = db.relationship('Rider', backref='rider')
     # resto_review = db.relationship('Restaurant', backref= 'restoz')
 
@@ -105,6 +123,8 @@ class Payment(db.Model, SerializerMixin):
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
 
+    serialize_only = ('amount', 'customer_id','order_id')
+
 class Order(db.Model, SerializerMixin):
     __tablename__ = 'orders'
 
@@ -113,7 +133,11 @@ class Order(db.Model, SerializerMixin):
     ride_id = db.Column(db.Integer, db.ForeignKey('riders.id'))
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
 
+    
+
     payment = db.relationship('Payment', backref='order')
     meals = db.relationship('Meal', secondary=meal_order, back_populates='order')
+
+    serialize_rules = ( '-meals.order', 'price', 'customer.user.name', 'rider.userz.name', 'rider.plate_number', 'rider.bike_type')
 
 
