@@ -19,8 +19,14 @@
 
 1. customer.viewMeals
 2. customer.makeOrder
+   - record meals in meal-order table (meal_id, order_id)
+   - record the price
+   - ride_id
+   - customer_id
 3. customer.makePayment
 4. customer.cancelOrder
+   - customer can cancel an order
+   - Status 'cancelled`
 5. customer.reviewOrder
 6. customer.reviewRider
 7. customer.viewpreviousOrders

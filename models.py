@@ -62,7 +62,7 @@ class Customer(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     resto_id = db.Column(db.Integer, db.ForeignKey('restaurants.id'))
 
-    serialize_only = ('address', 'wallet', 'user.name')
+    serialize_only = ('address', 'wallet', 'user.name', 'id')
 
     payments= db.relationship('Payment', backref='customer')
     order = db.relationship('Order', backref='customer')
@@ -133,7 +133,7 @@ class Order(db.Model, SerializerMixin):
     ride_id = db.Column(db.Integer, db.ForeignKey('riders.id'))
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
 
-    
+    status = db.Column(db.String, default = 'requested')
 
     payment = db.relationship('Payment', backref='order')
     meals = db.relationship('Meal', secondary=meal_order, back_populates='order')

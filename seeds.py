@@ -14,6 +14,17 @@ with app.app_context():
 
     bike_types =[ "Kayosaki", "Honda", "Yamaha", "SkyGo", "motocross", "enduro"]
 
+    User.query.delete()
+    Rider.query.delete()
+    Owner.query.delete()
+    Customer.query.delete()
+    Restaurant.query.delete()
+    Review.query.delete()
+    Payment.query.delete()
+    Order.query.delete()
+    Meal.query.delete()
+    
+
     #User
     for i in range(50):
         name = fake.name()
@@ -104,7 +115,7 @@ with app.app_context():
     #Order
     for i in range(10):
         price= random.randint(10, 100)
-        rider_id = i +1
+        rider_id = 0
         customer_id = i +1
 
         new_order = Order(price=price, ride_id=rider_id, customer_id=customer_id)
