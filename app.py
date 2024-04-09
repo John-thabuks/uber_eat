@@ -1,15 +1,5 @@
-from flask import Flask, make_response,request, jsonify
-from models import db, User, Rider, Owner,Customer, Meal, Restaurant, Review, Payment, Order
-from flask_migrate import Migrate
-
-app = Flask(__name__)
-
-app.config["SQLALCHEMY_DATABASE_URI"] ="sqlite:///uber.db"
-app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
-db.init_app(app)
-
-migrate = Migrate(app, db)
-app.json.compact = False
+from config import app, make_response,jsonify, request, db
+from models import User, Rider, Owner,Customer, Meal, Restaurant, Review, Payment, Order
 
 
 @app.route('/')
@@ -60,7 +50,7 @@ def placeOrder():
     return make_response(new_order.to_dict(), 201)
 
 #customer cancel order
-@app.route('/customer/order/<int:order>/cancel')
+@app.route('/customer/order/<int:order>/cancel', methods=["DELETE"])
 def cancelOrder(order):
     order_id = order
     my_order = Order.query.get_or_404(order_id)
@@ -117,6 +107,7 @@ def riderDeclinesOrder(orderId):
     return make_response(jsonify({"Message" : "You have successfully declined the order."}), 200)
 
 
+
  #ro.addRestaurant
 @app.route('/restaurant', methods=['POST'])
 def addRestaurant():
@@ -157,7 +148,7 @@ def addMeal():
 
 
 #rider.completeRide
-@app.route('/rider/requests/<int:orderId>/decline', methods=['POST'])
+@app.route('/rider/requests/<int:orderId>/completed', methods=['POST'])
 def rider_order_completed(orderId):
     order = Order.query.get(id=orderId)
 
@@ -209,10 +200,20 @@ def meal_detail(id):
 
 
 
+#add user
+@app.route("/adduser", methods=["POST"])
+def addUser():
+    #initialize the class with form data
+    #Add instance to session and commit it
+    form_data  = request.get_json()
+    new_user = User(name=form_data["name"] , email=form_data["email"])
+    new_user.password_hash = form_data["password"]
 
 
-
-
+    db.session.add(new_user)
+    db.session.commit()
+    print(new_user)
+    return make_response(new_user.to_dict(), 201)
 
 
 

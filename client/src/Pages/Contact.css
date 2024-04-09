@@ -1,0 +1,48 @@
+.contact-container {
+  padding: 20px;
+}
+
+.contact-banner {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.contact-banner h1 {
+  font-size: 36px;
+}
+
+.contact-banner p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.contact-details {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.contact-info {
+  max-width: 400px;
+}
+
+.contact-info h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.contact-info p {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.google-map {
+  width: 100%;
+}
+
+.quote {
+  font-style: italic;
+  border-left: 5px solid #333;
+  padding-left: 10px;
+}

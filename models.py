@@ -1,12 +1,17 @@
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
 # models.py
 from sqlalchemy_serializer import SerializerMixin
 # from sqlalchemy_serializer import SerializerMixin
-from sqlalchemy import MetaData
+# from sqlalchemy import MetaData
 
-metadata = MetaData()
+# metadata = MetaData()
 
-db = SQLAlchemy(metadata=metadata)
+# db = SQLAlchemy(metadata=metadata)
+
+#Import from config file
+from config import db, bcrypt
+from sqlalchemy.ext.hybrid import hybrid_property
+
 
 meal_order = db.Table(
     'meal_orders',
@@ -19,12 +24,28 @@ class User(db.Model, SerializerMixin):
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True)
+    email = db.Column(db.String, nullable=False, default="no_email@gmail.com")
+    _password_hash = db.Column(db.String, nullable=False)
 
     serialize_only = ('name')
 
     rider = db.relationship('Rider', backref='userz')
     userCustomer = db.relationship('Customer',backref='user')
     userOwner = db.relationship('Owner', backref='user')
+
+    #getter _password_hash
+    @hybrid_property
+    def password_hash(self):
+        return self._password_hash
+    
+    #setter  _password_has
+    @password_hash.setter
+    def password_hash(self, user_password):
+        new_password_hash = bcrypt.generate_password_hash(user_password.encode("utf-8"))
+        self._password_hash = new_password_hash.decode("utf-8")
+
+
+    #authenticate method :-> used to compare user's password to _password_has
 
 class Rider(db.Model, SerializerMixin):
     __tablename__ = 'riders'
