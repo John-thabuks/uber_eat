@@ -1,0 +1,32 @@
+h2 {
+  margin-bottom: 5px;
+  text-align: center;
+  display: block;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.card {
+  flex-basis: calc(33.33% - 20px); /* Adjust this value as needed */
+  margin-bottom: 20px; /* Adjust margin as needed */
+  box-sizing: border-box;
+}
+
+.card-body {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.card-title {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.card-button {
+  margin-top: 10px;
+}

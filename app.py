@@ -1,6 +1,6 @@
-from config import app, make_response,jsonify, request, db
+from config import app, make_response,jsonify, request, db, jwt
 from models import User, Rider, Owner,Customer, Meal, Restaurant, Review, Payment, Order
-
+import datetime
 
 @app.route('/')
 def hello():
@@ -216,9 +216,26 @@ def addUser():
     return make_response(new_user.to_dict(), 201)
 
 
+#Login
+@app.route("/login", methods=["POST"])
+def login():
+    user = request.get_json()
+    name = user["name"]
+    email = user["email"]
+    password = user["password"]
 
+    target_user = User.query.filter_by(email=email).first()
 
+    if target_user:
+        if target_user.authenticate(password):
+            token_generated = jwt.encode({"id": target_user.id, "name": target_user.name, "exp": datetime.datetime.now()+datetime.timedelta(minutes=45)}, app.config["SECRET_KEY"],"HS256")
+            return make_response({"message":"Log in successful", "token":token_generated}, 200)
+        
+        return make_response({"message": "jokes on you. Wrong credentials"},403)
 
+    else:
+        return make_response({"message": "user not found"},404)
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
