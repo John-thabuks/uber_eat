@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Container, Row, Form, Button, Col } from "react-bootstrap"
-import ViewAllRestaurants from "./../components/Restaurant/ViewAllRestaurants"
+import AddMealForm from "./../components/Meal/AddMealForm"
 
 
 
@@ -62,7 +62,7 @@ const Login = () => {
                     </Col>
                 </Row>
             </Container>
-            <ViewAllRestaurants />
+            <AddMealForm />
 
         </>
     )
