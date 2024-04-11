@@ -27,7 +27,7 @@ class User(db.Model, SerializerMixin):
     email = db.Column(db.String, nullable=False, default="no_email@gmail.com")
     _password_hash = db.Column(db.String, nullable=False)
 
-    serialize_only = ('name')
+    serialize_only = ('name', 'email')
 
     rider = db.relationship('Rider', backref='userz')
     userCustomer = db.relationship('Customer',backref='user')
