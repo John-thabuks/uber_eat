@@ -29,7 +29,7 @@ with app.app_context():
     for i in range(50):
         name = fake.name()
 
-        new_user = User(name=name, email=f"{name}@gmail.com")
+        new_user = User(name=name, email=f"{name}@gmail.com", user_type=random.choice(["Customer", "Rider", "Owner"]))
         new_user.password_hash = f"{name}@1234"
         db.session.add(new_user)
     print("finished seeding  user")

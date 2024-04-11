@@ -1,15 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Container, Row, Form, Button, Col } from "react-bootstrap"
-import AddMealForm from "./../components/Meal/AddMealForm"
-
+import RideRequests from "./../components/Rider/RideRequests"
+import { decodeToken } from "react-jwt"
+import { useNavigate } from "react-router-dom"
+import { myAuthContext } from './../AuthContxt'
 
 
 
 const Login = () => {
 
+
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+
+    const { logIn } = useContext(myAuthContext)
+
+    const navigate = useNavigate()
 
     function handleSubmit(e) {
         e.preventDefault()
@@ -24,7 +31,23 @@ const Login = () => {
             body: JSON.stringify(formdata)
         })
             .then(resp => resp.json())
-            .then(body => console.log(body))
+            .then(body => {
+                console.log(body)
+                const mydecodedToken = decodeToken(body.token)
+                console.log(mydecodedToken)
+                logIn(body.token)
+                sessionStorage.setItem("token", body.token)
+
+                if (mydecodedToken["user_type"] === "Rider") {
+                    navigate("/RideRequest")
+                }
+                else if (mydecodedToken["user_type"] === "Customer") {
+                    navigate("/AllRestaurants")
+                }
+                else {
+                    console.log("Who are you and what is your type!!!")
+                }
+            })
         console.log("Submit")
     }
 
@@ -62,7 +85,7 @@ const Login = () => {
                     </Col>
                 </Row>
             </Container>
-            <AddMealForm />
+
 
         </>
     )

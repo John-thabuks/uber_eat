@@ -44,3 +44,7 @@ export default SignUp
 
 // component RideRequest 
 // View all restaurants
+//Navigate user after login : useNavigate
+// Protect api route : wraps
+//Get and store token in the frontend
+// Send request with our token

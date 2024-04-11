@@ -1,9 +1,36 @@
 from config import app, make_response,jsonify, request, db, jwt
 from models import User, Rider, Owner,Customer, Meal, Restaurant, Review, Payment, Order
 import datetime
+from functools import wraps
+
+# protect API route
+def token_required(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        token = None
+        if "jwttoken" in request.headers:
+            token = request.headers["jwttoken"]
+        else:
+            return make_response({"ERROR": "Where is your access token"}, 403)
+        try:
+            decode_data = jwt.decode(token, app.config["SECRET_KEY"], algorithms="HS256")
+            current_user = User.query.get(decode_data["id"])
+
+        except Exception as e:
+            print(e)
+            return make_response({"ERROR": "Invalid access token"}, 403)
+        
+        return f(current_user, *args, **kwargs)
+    return decorator
+
+
+
+
 
 @app.route('/')
-def hello():
+@token_required
+def hello(current_user):
+    print(current_user)
     return "<h2>Hello world</h2>"
 
 
@@ -15,9 +42,11 @@ def viewallcustomers():
     return make_response(jsonify(customers_list), 200)
 
 
+
 #Customer : viewMeals
 @app.route('/meals')
-def allmeals():
+@token_required
+def allmeals(current_user):
     meals = Meal.query.all()
     meal_dict = [meal.to_dict() for meal in meals]
     return make_response(jsonify(meal_dict), 200)
@@ -127,7 +156,7 @@ def addRestaurant():
 
 
 #ro.addMeal
-@app.route('/meals', methods=['POST'])
+@app.route('/meals', methods=['POST'])   #Check of the routing --> restaurant/<string:name>/meals
 def addMeal():
     name = request.form.get('name')
     price = request.form.get('price')
@@ -162,7 +191,8 @@ def rider_order_completed(orderId):
 
 #see all restaurants
 @app.route('/restaurants')
-def all_restaurants():
+@token_required
+def all_restaurants(current_user):
     restos = Restaurant.query.all()
     list_all_resto = [resto.to_dict() for resto in restos]
     # for resto in restos:
@@ -171,7 +201,7 @@ def all_restaurants():
     return list_all_resto, 200
             
 
-#click on a restaurant
+#click on a restaurant and will display all its meals
 @app.route('/restaurants/<int:id>/meals')
 def individual_restaurant(id):
     resto = Restaurant.query.get(id)
@@ -185,7 +215,7 @@ def individual_restaurant(id):
     return jsonify({"meals": meals}), 200
 
 #select an individual meal and see its details
-@app.route('/meals/<int:id>')
+@app.route('/meals/<int:id>')   #Check of the routing --> restaurant/<string:name>/meals/<int:id>
 def meal_detail(id):
     meal = Meal.query.get(id)
     selected_meal={
@@ -228,7 +258,7 @@ def login():
 
     if target_user:
         if target_user.authenticate(password):
-            token_generated = jwt.encode({"id": target_user.id, "name": target_user.name, "exp": datetime.datetime.now()+datetime.timedelta(minutes=45)}, app.config["SECRET_KEY"],"HS256")
+            token_generated = jwt.encode({"id": target_user.id, "name": target_user.name, "user_type" : target_user.user_type, "exp": datetime.datetime.now()+datetime.timedelta(minutes=45)}, app.config["SECRET_KEY"],"HS256")
             return make_response({"message":"Log in successful", "token":token_generated}, 200)
         
         return make_response({"message": "jokes on you. Wrong credentials"},403)

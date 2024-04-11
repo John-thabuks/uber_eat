@@ -5,23 +5,29 @@ import About from './Pages/About';
 import Home from './Pages/Home';
 import Contact from './Pages/ContactUs';
 import Login from "./Auth/Login"
-
+import RideRequests from "./components/Rider/RideRequests"
+import ViewAllRestaurants from "./components/Restaurant/ViewAllRestaurants"
+import { AuthContext } from "./AuthContxt"
 function App() {
 
   return (
-    <BrowserRouter>
-      <>
+    <AuthContext>
+      <BrowserRouter>
+        <>
 
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/About" element={<About />} />
-          <Route path="/Contact" element={<Contact />} />
-          <Route path='Login' element={<Login />} />
-        </Routes>
-        {/* <RideRequests baseURL={baseURL} /> */}
-      </>
-    </BrowserRouter>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/About" element={<About />} />
+            <Route path="/Contact" element={<Contact />} />
+            <Route path='/Login' element={<Login />} />
+            <Route path='/RideRequest' element={<RideRequests />} />
+            <Route path='/AllRestaurants' element={<ViewAllRestaurants />} />
+          </Routes>
+          {/* <RideRequests baseURL={baseURL} /> */}
+        </>
+      </BrowserRouter>
+    </AuthContext>
   );
 }
 
