@@ -40,7 +40,7 @@ class User(db.Model, SerializerMixin):
         return self._password_hash
     
     #setter  _password_has
-    @password_hash.setter
+    @password_hash.setter   #Take the name of @<getter_name>.setter
     def password_hash(self, user_password):
         new_password_hash = bcrypt.generate_password_hash(user_password.encode("utf-8"))
         self._password_hash = new_password_hash.decode("utf-8")

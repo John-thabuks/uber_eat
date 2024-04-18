@@ -257,8 +257,14 @@ def login():
     target_user = User.query.filter_by(email=email).first()
 
     if target_user:
-        if target_user.authenticate(password):
-            token_generated = jwt.encode({"id": target_user.id, "name": target_user.name, "user_type" : target_user.user_type, "exp": datetime.datetime.now()+datetime.timedelta(minutes=45)}, app.config["SECRET_KEY"],"HS256")
+        if target_user.authenticate(password):   #method we defined in models for checking if password in db === <user[password]_given>
+            token_generated = jwt.encode({
+                "id": target_user.id, 
+                "name": target_user.name, 
+                "user_type" : target_user.user_type, 
+                "exp": datetime.datetime.now()+datetime.timedelta(minutes=45)
+                }, 
+                app.config["SECRET_KEY"],"HS256")
             return make_response({"message":"Log in successful", "token":token_generated}, 200)
         
         return make_response({"message": "jokes on you. Wrong credentials"},403)

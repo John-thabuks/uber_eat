@@ -8,7 +8,9 @@ import Login from "./Auth/Login"
 import RideRequests from "./components/Rider/RideRequests"
 import ViewAllRestaurants from "./components/Restaurant/ViewAllRestaurants"
 import { AuthContext } from "./AuthContxt"
+
 function App() {
+
 
   return (
     <AuthContext>

@@ -7,16 +7,21 @@ import { myAuthContext } from './../AuthContxt'
 
 
 
-const Login = () => {
 
+const Login = () => {
+    // token
 
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
+    // distructuring the value props from the context provider
     const { logIn } = useContext(myAuthContext)
 
+
     const navigate = useNavigate()
+
+    // console.log(studentList)
 
     function handleSubmit(e) {
         e.preventDefault()
@@ -25,17 +30,32 @@ const Login = () => {
             "email": email,
             "password": password
         }
+        //This is how we are passing our data to the backend
         fetch("http://127.0.0.1:5000/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formdata)
         })
+            // How we are receiving our data from the backend.
             .then(resp => resp.json())
             .then(body => {
                 console.log(body)
+
+                // {"message":"Log in successful", "token":token_generated}, 200
+                // decodeToken -->React decode backend token
                 const mydecodedToken = decodeToken(body.token)
                 console.log(mydecodedToken)
-                logIn(body.token)
+                /*
+                    {
+                "id": target_user.id, 
+                "name": target_user.name, 
+                "user_type" : target_user.user_type, 
+                "exp": datetime.datetime.now()+datetime.timedelta(minutes=45)
+                }
+                */
+
+                logIn(body.token)    //Global function that take our token as argument
+                // sessionstorage setting
                 sessionStorage.setItem("token", body.token)
 
                 if (mydecodedToken["user_type"] === "Rider") {
@@ -79,7 +99,7 @@ const Login = () => {
                                 <Form.Control type="password" placeholder="Enter Your Password" onChange={(e) => setPassword(e.target.value)} value={password} name='password' />
                             </Form.Group>
                             <Button variant="primary" type="submit">
-                                Sign Up
+                                Log in
                             </Button>
                         </Form>
                     </Col>

@@ -3,6 +3,7 @@ import { Card, Button } from "react-bootstrap";
 import './ViewAllRestaurants.css';
 import { myAuthContext } from "./../../AuthContxt"
 
+
 const ViewAllRestaurants = () => {
 
     const sampleImage = "https://rb.gy/9zqx22"
@@ -11,6 +12,8 @@ const ViewAllRestaurants = () => {
     const [errorMessage, setErrorMessage] = useState("")
 
     const { token } = useContext(myAuthContext)
+
+
 
     useEffect(() => {
         fetch("http://127.0.0.1:5000/restaurants", {
